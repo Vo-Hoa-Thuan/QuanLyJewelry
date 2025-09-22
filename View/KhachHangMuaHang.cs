@@ -22,6 +22,18 @@ namespace QuanLyJewelry.View
             this.Text = "Sản phẩm đã mua";
             this.StartPosition = FormStartPosition.CenterParent;
             this.Size = new Size(900, 600);
+            this.MinimumSize = new Size(820, 520);
+            this.BackColor = Color.White;
+            this.Font = new Font("Segoe UI", 10);
+
+            // Header
+            var pnlTop = new Panel();
+            UITheme.StyleHeaderPanel(pnlTop, "Danh sách sản phẩm đã mua");
+            var lblTitle = new Label
+            {
+                AutoSize = true
+            };
+            pnlTop.Controls.Add(lblTitle);
 
             _grid = new DataGridView
             {
@@ -29,9 +41,16 @@ namespace QuanLyJewelry.View
                 ReadOnly = true,
                 RowHeadersVisible = false,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                Font = new Font("Segoe UI", 11)
+                Font = new Font("Segoe UI", 10),
+                BorderStyle = BorderStyle.None,
+                CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AllowUserToResizeRows = false,
+                ColumnHeadersHeight = 36
             };
+            UITheme.StyleDataGrid(_grid);
             this.Controls.Add(_grid);
+            this.Controls.Add(pnlTop);
 
             this.Load += FrmKhachHangMuaHang_Load;
         }
@@ -39,6 +58,11 @@ namespace QuanLyJewelry.View
         private void FrmKhachHangMuaHang_Load(object? sender, EventArgs e)
         {
             DataTable dt = ThongKeBUS.Instance.LaySanPhamDaMuaKhachHang(_maKhachHang, _nam, _thang);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                // Fallback: hiển thị tất cả giao dịch của KH nếu tháng/năm không có dữ liệu
+                dt = ThongKeBUS.Instance.LaySanPhamDaMuaKhachHangAll(_maKhachHang);
+            }
             _grid.DataSource = dt;
             if (dt != null && dt.Columns.Count > 0)
             {
@@ -51,6 +75,8 @@ namespace QuanLyJewelry.View
                 if (dt.Columns.Contains("SoLuong")) _grid.Columns["SoLuong"].HeaderText = "Số lượng";
                 if (dt.Columns.Contains("DonGia")) { _grid.Columns["DonGia"].HeaderText = "Đơn giá"; _grid.Columns["DonGia"].DefaultCellStyle.Format = "N0"; }
                 if (dt.Columns.Contains("ThanhTien")) { _grid.Columns["ThanhTien"].HeaderText = "Thành tiền"; _grid.Columns["ThanhTien"].DefaultCellStyle.Format = "N0"; }
+                _grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                _grid.AutoResizeColumns();
             }
         }
     }

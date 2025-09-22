@@ -212,5 +212,29 @@ namespace QuanLyJewelry.DAO
 
             return KetNoiSql.Instance.execSql(sql, parameters);
         }
+
+        public DataTable LaySanPhamDaMuaKhachHangAll(int maKhachHang)
+        {
+            string sql = @"SELECT 
+                gd.ID as MaGiaoDich,
+                CONVERT(DATE, gd.NgayGD) as NgayGD,
+                sp.TenSanPham,
+                ISNULL(ct.SoLuong, 0) as SoLuong,
+                ISNULL(ct.DonGia, 0) as DonGia,
+                ISNULL(ct.SoLuong * ct.DonGia, 0) as ThanhTien
+            FROM GIAODICH gd
+            JOIN CHITIETGIAODICH ct ON gd.ID = ct.MaGD
+            JOIN SANPHAM sp ON ct.MaSanPham = sp.ID
+            WHERE gd.LoaiGD = 'BAN_RA'
+                AND gd.MaKhachHang = @MaKhachHang
+            ORDER BY gd.NgayGD DESC, gd.ID DESC, sp.TenSanPham";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@MaKhachHang", maKhachHang }
+            };
+
+            return KetNoiSql.Instance.execSql(sql, parameters);
+        }
     }
 }

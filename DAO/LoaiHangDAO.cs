@@ -1,5 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
-using SaleApp.Model;
+using QuanLyJewelry.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,24 +8,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SaleApp.DAO
+namespace QuanLyJewelry.DAO
 {
-    internal class QuanLyJewelry
+    internal class LoaiHangDAO
     {
-        private static QuanLyJewelry instance;
+        private static LoaiHangDAO instance;
 
-        internal static QuanLyJewelry Instance
+        internal static LoaiHangDAO Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new QuanLyJewelry();
+                    instance = new LoaiHangDAO();
                 return instance;
             }
         }
     
 
-        private QuanLyJewelry() { }
+        private LoaiHangDAO() { }
 
         public List<LOAIHANG> getDataLoaiHang()
         {

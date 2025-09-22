@@ -63,7 +63,7 @@ namespace QuanLyJewelry.View
                     }
 
                     // Lưu workbook ra tệp Excel
-                    package.SaveAs(new FileInfo(filePath));
+                    //package.SaveAs(new FileInfo(filePath));
 
                     MessageBox.Show("Dữ liệu đã được xuất thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

@@ -42,6 +42,10 @@ namespace QuanLyJewelry.View
             chartDoanhThu.Series = new SeriesCollection();
             chartDoanhThu.AxisX.Clear();
             chartDoanhThu.AxisY.Clear();
+            chartDoanhThu.Zoom = LiveCharts.ZoomingOptions.X;
+            chartDoanhThu.Pan = LiveCharts.PanningOptions.X;
+            chartDoanhThu.LegendLocation = LiveCharts.LegendLocation.None;
+            chartDoanhThu.Hoverable = false;
 
             chartDoanhThu.AxisX.Add(new Axis
             {
@@ -56,6 +60,7 @@ namespace QuanLyJewelry.View
 
             // Chart Loại SP
             chartLoaiSP.Series = new SeriesCollection();
+            chartLoaiSP.LegendLocation = LiveCharts.LegendLocation.Right;
         }
         #endregion
 
@@ -121,7 +126,10 @@ namespace QuanLyJewelry.View
             var colSeries = new LiveCharts.Wpf.ColumnSeries
             {
                 Title = "Doanh thu",
-                Values = new LiveCharts.ChartValues<double>()
+                Values = new LiveCharts.ChartValues<double>(),
+                DataLabels = true,
+                MaxColumnWidth = 40,
+                ColumnPadding = 5
             };
 
             var labels = new List<string>();
@@ -138,15 +146,20 @@ namespace QuanLyJewelry.View
             chartDoanhThu.AxisX.Add(new LiveCharts.Wpf.Axis
             {
                 Title = "Tháng",
-                Labels = labels
+                Labels = labels,
+                LabelsRotation = 0,
+                Separator = new LiveCharts.Wpf.Separator { Step = 1, StrokeThickness = 0.5 }
             });
 
             chartDoanhThu.AxisY.Clear();
             chartDoanhThu.AxisY.Add(new LiveCharts.Wpf.Axis
             {
                 Title = "Doanh thu (đ)",
-                LabelFormatter = value => value.ToString("N0")
+                LabelFormatter = value => value.ToString("N0"),
+                Separator = new LiveCharts.Wpf.Separator { StrokeThickness = 0.5 }
             });
+
+            chartDoanhThu.DisableAnimations = true;
         }
 
         private void LoadDoanhThuTheoLoai()

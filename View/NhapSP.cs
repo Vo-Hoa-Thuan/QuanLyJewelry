@@ -39,6 +39,7 @@ namespace QuanLyJewelry.View
         {
             try
             {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 using (var package = new ExcelPackage())
                 {
                     var worksheet = package.Workbook.Worksheets.Add("Sheet1");
@@ -168,7 +169,7 @@ namespace QuanLyJewelry.View
             {
                 MaSanPham = txtMaSP.Text,
                 TenSanPham = txtTenSP.Text,
-                MaLoaiHang = Convert.ToInt32(cbLoaiSP.SelectedValue),  
+                MaLoaiHang = Convert.ToInt32(cbLoaiSP.SelectedValue),
                 GiaBan = giaBan,
                 MoTa = txtMoTa.Text,
                 HinhAnh = pbHinhAnh.Tag?.ToString()

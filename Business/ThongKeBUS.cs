@@ -58,5 +58,10 @@ namespace QuanLyJewelry.Business
         {
             return ThongKeDAO.Instance.LaySanPhamDaMuaKhachHang(maKhachHang, nam, thang);
         }
+
+        public DataTable LaySanPhamDaMuaKhachHangAll(int maKhachHang)
+        {
+            return ThongKeDAO.Instance.LaySanPhamDaMuaKhachHangAll(maKhachHang);
+        }
     }
 }

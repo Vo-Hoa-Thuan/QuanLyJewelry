@@ -26,7 +26,6 @@ namespace QuanLyJewelry.DAO
         // hàm dựng 
         private DataProvider() { }
 
-        //private string connectionSTR = @"Data Source=DESKTOP-J60VD8G;Initial Catalog=QUAN_LY_BAN_HANG;Integrated Security=True";
         private string connectionSTR = @"Data Source=VOHOATHUAN\VOHOATHUAN1;Initial Catalog=db_Jewelry;Integrated Security=True";
 
 

@@ -40,6 +40,7 @@ namespace QuanLyJewelry.View
             try
             {
                 //tạo một workbook Excel mới
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 using (var package = new ExcelPackage())
                 {
                     //tạo trang tinh sheet1 và gán chp workbook
@@ -66,7 +67,7 @@ namespace QuanLyJewelry.View
                     }
 
                     // Lưu workbook ra tệp Excel
-                    package.SaveAs(new FileInfo(filePath));
+                    package.SaveAs(new System.IO.FileInfo(filePath));
 
                     MessageBox.Show("Dữ liệu đã được xuất thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

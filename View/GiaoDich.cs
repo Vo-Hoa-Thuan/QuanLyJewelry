@@ -4,15 +4,24 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
+using System.Drawing;
+using System.Drawing.Printing;
 
 namespace QuanLyJewelry.View
 {
     public partial class frmGiaoDich : Form
     {
+        private PrintDocument _printDocument = new PrintDocument();
+        private PrintPreviewDialog _printPreview = new PrintPreviewDialog();
+        private GIAODICH _lastSavedGiaoDich;
+        private List<CHITIETGIAODICH> _lastSavedChiTiet;
         public frmGiaoDich()
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
+            _printDocument.PrintPage += PrintDocument_PrintPage;
+            _printPreview.Document = _printDocument;
+            _printPreview.UseAntiAlias = true;
         }
 
         private void frmGiaoDich_Load(object sender, EventArgs e)
@@ -127,7 +136,8 @@ namespace QuanLyJewelry.View
             dgvChiTiet.Rows.Add();
 
             // Sử dụng BeginInvoke để tránh reentrant call
-            this.BeginInvoke(new MethodInvoker(delegate {
+            this.BeginInvoke(new MethodInvoker(delegate
+            {
                 if (dgvChiTiet.Rows.Count > 0)
                 {
                     int lastRowIndex = dgvChiTiet.Rows.Count - 1;
@@ -234,6 +244,14 @@ namespace QuanLyJewelry.View
                 if (result)
                 {
                     MessageBox.Show("Thêm đơn hàng thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Lưu lại đơn hàng vừa tạo để in
+                    _lastSavedGiaoDich = gd;
+                    _lastSavedChiTiet = listCT;
+                    // Hỏi in hóa đơn
+                    if (MessageBox.Show("Bạn có muốn in hóa đơn không?", "In hóa đơn", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        _printPreview.ShowDialog(this);
+                    }
                     ResetForm();
                 }
                 else
@@ -245,6 +263,97 @@ namespace QuanLyJewelry.View
             {
                 MessageBox.Show("Lỗi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void PrintDocument_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            // Nếu chưa có dữ liệu đã lưu, sử dụng dữ liệu đang nhập
+            var gd = _lastSavedGiaoDich ?? new GIAODICH
+            {
+                LoaiGD = cboLoaiGD.Text,
+                MaKhachHang = cboKhachHang.SelectedValue == null ? 0 : Convert.ToInt32(cboKhachHang.SelectedValue),
+                MaNhanVien = cboNhanVien.SelectedValue == null ? 0 : Convert.ToInt32(cboNhanVien.SelectedValue),
+                NgayGD = DateTime.Now,
+                TongTien = TinhTongTien()
+            };
+
+            var ds = _lastSavedChiTiet ?? new List<CHITIETGIAODICH>();
+            if (_lastSavedChiTiet == null)
+            {
+                foreach (DataGridViewRow row in dgvChiTiet.Rows)
+                {
+                    if (row.IsNewRow) continue;
+                    if (row.Cells["colMaSP"].Value == null) continue;
+                    ds.Add(new CHITIETGIAODICH
+                    {
+                        MaSanPham = Convert.ToInt32(row.Cells["colMaSP"].Value),
+                        SoLuong = Convert.ToInt32(row.Cells["colSoLuong"].Value),
+                        DonGia = Convert.ToDecimal(row.Cells["colDonGia"].Value)
+                    });
+                }
+            }
+
+            var g = e.Graphics;
+            int x = e.MarginBounds.Left;
+            int y = e.MarginBounds.Top;
+            int width = e.MarginBounds.Width;
+
+            using var titleFont = new Font("Segoe UI", 16, FontStyle.Bold);
+            using var headerFont = new Font("Segoe UI", 11, FontStyle.Bold);
+            using var textFont = new Font("Segoe UI", 10);
+
+            g.DrawString("HÓA ĐƠN BÁN HÀNG", titleFont, Brushes.Black, x, y); y += 34;
+            g.DrawString($"Ngày: {DateTime.Now:dd/MM/yyyy HH:mm}", textFont, Brushes.Black, x, y); y += 20;
+            g.DrawString($"Khách hàng: {cboKhachHang.Text}", textFont, Brushes.Black, x, y); y += 20;
+            g.DrawString($"Nhân viên: {cboNhanVien.Text}", textFont, Brushes.Black, x, y); y += 24;
+
+            // Header bảng
+            int col1 = x;              // Sản phẩm
+            int col2 = x + width - 260; // SL
+            int col3 = x + width - 180; // Đơn giá
+            int col4 = x + width - 80;  // Thành tiền
+
+            g.DrawString("Sản phẩm", headerFont, Brushes.Black, col1, y);
+            g.DrawString("SL", headerFont, Brushes.Black, col2, y);
+            g.DrawString("Đơn giá", headerFont, Brushes.Black, col3, y);
+            g.DrawString("Thành tiền", headerFont, Brushes.Black, col4, y);
+            y += 22;
+            g.DrawLine(Pens.Black, x, y, x + width, y); y += 6;
+
+            decimal tong = 0;
+            foreach (var ct in ds)
+            {
+                // Lấy tên sản phẩm từ combo datasource nếu có
+                string tenSP = ct.MaSanPham.ToString();
+                try
+                {
+                    var colSP = (DataGridViewComboBoxColumn)dgvChiTiet.Columns["colMaSP"];
+                    if (colSP?.DataSource is DataTable sptb)
+                    {
+                        var rows = sptb.Select($"ID = {ct.MaSanPham}");
+                        if (rows.Length > 0) tenSP = rows[0]["TenSanPham"].ToString();
+                    }
+                }
+                catch { }
+
+                decimal thanhTien = ct.SoLuong * ct.DonGia;
+                tong += thanhTien;
+
+                g.DrawString(tenSP, textFont, Brushes.Black, col1, y);
+                g.DrawString(ct.SoLuong.ToString(), textFont, Brushes.Black, col2, y);
+                g.DrawString(ct.DonGia.ToString("N0"), textFont, Brushes.Black, col3, y);
+                g.DrawString(thanhTien.ToString("N0"), textFont, Brushes.Black, col4, y);
+                y += 20;
+                if (y > e.MarginBounds.Bottom - 80)
+                {
+                    e.HasMorePages = true;
+                    return;
+                }
+            }
+
+            y += 10;
+            g.DrawLine(Pens.Black, x, y, x + width, y); y += 8;
+            g.DrawString($"Tổng cộng: {tong.ToString("N0")} đ", headerFont, Brushes.Black, col3 - 40, y);
         }
 
         private bool KiemTraDuLieu()
@@ -275,7 +384,8 @@ namespace QuanLyJewelry.View
                     dgvChiTiet.Rows[e.RowIndex].Cells["colDonGia"].Value = giaBan;
 
                     // Sử dụng BeginInvoke để tránh reentrant call
-                    this.BeginInvoke(new MethodInvoker(delegate {
+                    this.BeginInvoke(new MethodInvoker(delegate
+                    {
                         if (e.RowIndex < dgvChiTiet.Rows.Count && !dgvChiTiet.Rows[e.RowIndex].IsNewRow)
                         {
                             dgvChiTiet.CurrentCell = dgvChiTiet.Rows[e.RowIndex].Cells["colSoLuong"];
