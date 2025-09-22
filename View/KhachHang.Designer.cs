@@ -231,7 +231,7 @@
             this.btnSua.Name = "btnSua";
             this.btnSua.Size = new System.Drawing.Size(100, 40);
             this.btnSua.TabIndex = 13;
-            this.btnSua.Text = "Sửa";
+            this.btnSua.Text = "Xem chi tiết";
             this.btnSua.UseVisualStyleBackColor = true;
             this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
 
@@ -249,13 +249,13 @@
             // 
             // btnXemChiTiet
             // 
-            this.btnXemChiTiet.Location = new System.Drawing.Point(340, 190);
-            this.btnXemChiTiet.Name = "btnXemChiTiet";
-            this.btnXemChiTiet.Size = new System.Drawing.Size(120, 40);
-            this.btnXemChiTiet.TabIndex = 15;
-            this.btnXemChiTiet.Text = "Xem chi tiết";
-            this.btnXemChiTiet.UseVisualStyleBackColor = true;
-            this.btnXemChiTiet.Click += new System.EventHandler(this.btnXemChiTiet_Click);
+            //this.btnXemChiTiet.Location = new System.Drawing.Point(340, 190);
+            //this.btnXemChiTiet.Name = "btnXemChiTiet";
+            //this.btnXemChiTiet.Size = new System.Drawing.Size(120, 40);
+            //this.btnXemChiTiet.TabIndex = 15;
+            //this.btnXemChiTiet.Text = "Xem chi tiết";
+            //this.btnXemChiTiet.UseVisualStyleBackColor = true;
+            //this.btnXemChiTiet.Click += new System.EventHandler(this.btnXemChiTiet_Click);
 
             // 
             // dgvKhachHang

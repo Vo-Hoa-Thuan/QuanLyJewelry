@@ -132,25 +132,11 @@ namespace QuanLyJewelry.View
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            if (dgvKhachHang.CurrentRow == null) { MessageBox.Show("Chọn khách hàng để sửa"); return; }
+            if (dgvKhachHang.CurrentRow == null) { MessageBox.Show("Chọn khách hàng để xem"); return; }
             int id = Convert.ToInt32(dgvKhachHang.CurrentRow.Cells["ID"].Value);
-            KHACHHANG kh = KhachHangBUS.Instance.LayKhachHangTheoID(id);
-            if (kh != null)
+            using (var f = new frmKhachHangMuaHang(id, DateTime.Now.Year, DateTime.Now.Month))
             {
-                currentKhachHangId = kh.ID;
-                txtMaKH.Text = kh.MaKhachHang;
-                txtHoTen.Text = kh.HoTen;
-                txtSoDienThoai.Text = kh.SoDienThoai;
-                txtEmail.Text = kh.Email ?? "";
-                txtDiaChi.Text = kh.DiaChi ?? "";
-                dtpNgayVao.Value = kh.NgayVao;
-
-                isEditMode = true;
-                btnThem.Text = "Cập nhật";
-                btnSua.Enabled = true;
-                btnXoa.Enabled = true;
-
-                HienThiSanPhamDaMua(kh.ID); // Dùng ID
+                f.ShowDialog(this);
             }
         }
 

@@ -129,6 +129,7 @@
             this.btnXuatExcel.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnXuatExcel.BackColor = System.Drawing.Color.SteelBlue;
             this.btnXuatExcel.ForeColor = System.Drawing.Color.White;
+            this.btnXuatExcel.Click += new System.EventHandler(this.btnXuatExcel_Click);
 
             // 
             // btnInBaoCao
@@ -140,6 +141,7 @@
             this.btnInBaoCao.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnInBaoCao.BackColor = System.Drawing.Color.SteelBlue;
             this.btnInBaoCao.ForeColor = System.Drawing.Color.White;
+            this.btnInBaoCao.Click += new System.EventHandler(this.btnInBaoCao_Click);
 
             // Thêm controls vào panel
             this.panel1.Controls.Add(this.label5);
@@ -185,9 +187,9 @@
             this.groupBox2.ForeColor = System.Drawing.Color.DarkSlateBlue;
 
             // Chart doanh thu
-            //this.chartDoanhThu.Dock = System.Windows.Forms.DockStyle.Fill;
-            //this.chartDoanhThu.Location = new System.Drawing.Point(3, 25);
-            //this.groupBox2.Controls.Add(this.chartDoanhThu);
+            this.chartDoanhThu.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chartDoanhThu.Location = new System.Drawing.Point(3, 25);
+            this.groupBox2.Controls.Add(this.chartDoanhThu);
 
             // GroupBox1 - Thống kê tổng quan
             this.groupBox1.Text = "THỐNG KÊ TỔNG QUAN";
@@ -309,6 +311,7 @@
             this.dgvKhachHang.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.Lavender;
             this.dgvKhachHang.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dgvKhachHang.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            this.dgvKhachHang.DoubleClick += new System.EventHandler(this.dgvKhachHang_DoubleClick);
             this.tabPage4.Controls.Add(this.dgvKhachHang);
 
             // TabPage5 - Doanh thu theo loại
@@ -329,10 +332,10 @@
             this.dgvLoaiSP.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             this.dgvLoaiSP.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.Lavender;
 
-            //this.chartLoaiSP.Dock = DockStyle.Fill;
+            this.chartLoaiSP.Dock = DockStyle.Fill;
 
             this.splitContainer1.Panel1.Controls.Add(this.dgvLoaiSP);
-            //this.splitContainer1.Panel2.Controls.Add(this.chartLoaiSP);
+            this.splitContainer1.Panel2.Controls.Add(this.chartLoaiSP);
 
             this.tabPage5.Controls.Add(this.splitContainer1);
 
@@ -342,6 +345,12 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
+
+            // 
+            // printPreviewDialog1
+            // 
+            this.printPreviewDialog1.Document = this.printDocument1;
+            this.printPreviewDialog1.UseAntiAlias = true;
         }
 
         // Controls declarations

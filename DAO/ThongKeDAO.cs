@@ -25,7 +25,7 @@ namespace QuanLyJewelry.DAO
         {
             string sql = @"SELECT 
                 CONVERT(DATE, NgayGD) as Ngay,
-                SUM(TongTien) as DoanhThu,
+                ISNULL(SUM(TongTien), 0) as DoanhThu,
                 COUNT(*) as SoDonHang
             FROM GIAODICH 
             WHERE LoaiGD = 'BAN_RA' 
@@ -48,8 +48,8 @@ namespace QuanLyJewelry.DAO
             string sql = $@"SELECT TOP {top}
                 sp.TenSanPham,
                 lh.TenLoaiHang as LoaiSanPham,
-                SUM(ct.SoLuong) as SoLuongBan,
-                SUM(ct.SoLuong * ct.DonGia) as DoanhThu
+                ISNULL(SUM(ct.SoLuong), 0) as SoLuongBan,
+                ISNULL(SUM(ct.SoLuong * ct.DonGia), 0) as DoanhThu
             FROM CHITIETGIAODICH ct
             JOIN SANPHAM sp ON ct.MaSanPham = sp.ID
             JOIN LOAIHANG lh ON sp.MaLoaiHang = lh.ID
@@ -74,8 +74,8 @@ namespace QuanLyJewelry.DAO
             string sql = @"SELECT 
                 nv.HoTen as TenNhanVien,
                 COUNT(*) as SoDonHang,
-                SUM(gd.TongTien) as DoanhThu,
-                AVG(gd.TongTien) as DonGiaTrungBinh
+                ISNULL(SUM(gd.TongTien), 0) as DoanhThu,
+                ISNULL(AVG(NULLIF(gd.TongTien, 0)), 0) as DonGiaTrungBinh
             FROM GIAODICH gd
             JOIN NHANVIEN nv ON gd.MaNhanVien = nv.ID
             WHERE gd.LoaiGD = 'BAN_RA'
@@ -96,16 +96,17 @@ namespace QuanLyJewelry.DAO
         public DataTable LayTopKhachHang(int top, int nam, int thang)
         {
             string sql = $@"SELECT TOP {top}
+                kh.ID as MaKhachHang,
                 kh.HoTen as TenKhachHang,
                 COUNT(*) as SoLanMua,
-                SUM(gd.TongTien) as TongChiTieu,
+                ISNULL(SUM(gd.TongTien), 0) as TongChiTieu,
                 MAX(gd.NgayGD) as LanMuaGanNhat
             FROM GIAODICH gd
             JOIN KHACHHANG kh ON gd.MaKhachHang = kh.ID
             WHERE gd.LoaiGD = 'BAN_RA'
                 AND YEAR(gd.NgayGD) = @Nam
                 AND MONTH(gd.NgayGD) = @Thang
-            GROUP BY kh.HoTen
+            GROUP BY kh.ID, kh.HoTen
             ORDER BY TongChiTieu DESC";
 
             var parameters = new Dictionary<string, object>
@@ -121,8 +122,8 @@ namespace QuanLyJewelry.DAO
         {
             string sql = @"SELECT 
                 lh.TenLoaiHang as LoaiSanPham,
-                COUNT(ct.MaSanPham) as SoLuongBan,
-                SUM(ct.SoLuong * ct.DonGia) as DoanhThu
+                ISNULL(SUM(ct.SoLuong), 0) as SoLuongBan,
+                ISNULL(SUM(ct.SoLuong * ct.DonGia), 0) as DoanhThu
             FROM CHITIETGIAODICH ct
             JOIN SANPHAM sp ON ct.MaSanPham = sp.ID
             JOIN LOAIHANG lh ON sp.MaLoaiHang = lh.ID
@@ -146,8 +147,8 @@ namespace QuanLyJewelry.DAO
         {
             string sql = @"SELECT 
                 COUNT(*) as TongSoDonHang,
-                SUM(TongTien) as TongDoanhThu,
-                AVG(TongTien) as DonGiaTrungBinh,
+                ISNULL(SUM(TongTien), 0) as TongDoanhThu,
+                ISNULL(AVG(NULLIF(TongTien, 0)), 0) as DonGiaTrungBinh,
                 (SELECT COUNT(DISTINCT MaKhachHang) FROM GIAODICH 
                  WHERE LoaiGD = 'BAN_RA' AND YEAR(NgayGD) = @Nam AND MONTH(NgayGD) = @Thang) as SoKhachHang
             FROM GIAODICH 
@@ -168,7 +169,7 @@ namespace QuanLyJewelry.DAO
         {
             string sql = @"SELECT 
                 MONTH(NgayGD) as Thang,
-                SUM(TongTien) as DoanhThu,
+                ISNULL(SUM(TongTien), 0) as DoanhThu,
                 COUNT(*) as SoDonHang
             FROM GIAODICH 
             WHERE LoaiGD = 'BAN_RA' 
@@ -179,6 +180,34 @@ namespace QuanLyJewelry.DAO
             var parameters = new Dictionary<string, object>
             {
                 { "@Nam", nam }
+            };
+
+            return KetNoiSql.Instance.execSql(sql, parameters);
+        }
+
+        public DataTable LaySanPhamDaMuaKhachHang(int maKhachHang, int nam, int thang)
+        {
+            string sql = @"SELECT 
+                gd.ID as MaGiaoDich,
+                CONVERT(DATE, gd.NgayGD) as NgayGD,
+                sp.TenSanPham,
+                ISNULL(ct.SoLuong, 0) as SoLuong,
+                ISNULL(ct.DonGia, 0) as DonGia,
+                ISNULL(ct.SoLuong * ct.DonGia, 0) as ThanhTien
+            FROM GIAODICH gd
+            JOIN CHITIETGIAODICH ct ON gd.ID = ct.MaGD
+            JOIN SANPHAM sp ON ct.MaSanPham = sp.ID
+            WHERE gd.LoaiGD = 'BAN_RA'
+                AND gd.MaKhachHang = @MaKhachHang
+                AND YEAR(gd.NgayGD) = @Nam
+                AND MONTH(gd.NgayGD) = @Thang
+            ORDER BY gd.NgayGD DESC, gd.ID DESC, sp.TenSanPham";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@MaKhachHang", maKhachHang },
+                { "@Nam", nam },
+                { "@Thang", thang }
             };
 
             return KetNoiSql.Instance.execSql(sql, parameters);

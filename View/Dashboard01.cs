@@ -136,7 +136,7 @@ namespace QuanLyJewelry.View
             signin.ShowDialog();
         }
 
-        private void btnThongKe_Click_1(object sender, EventArgs e)
+        private void btnThongKe_Click(object sender, EventArgs e)
         {
             frmThongKe a = new frmThongKe();
             LoadForm(a);

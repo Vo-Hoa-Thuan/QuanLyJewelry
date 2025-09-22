@@ -91,7 +91,7 @@
             gbThongTinNCC.Size = new Size(1146, 303);
             gbThongTinNCC.TabIndex = 0;
             gbThongTinNCC.TabStop = false;
-            gbThongTinNCC.Text = "Thông tin Nhà Cung Cấp";
+            gbThongTinNCC.Text = "Thông tin Nhà Cung Cấp hhhhhhhhhhh";
             // 
             // label5
             // 
