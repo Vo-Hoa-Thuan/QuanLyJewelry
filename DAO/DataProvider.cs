@@ -7,7 +7,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using QuanLyJewelry.Model;
+using QuanLyJewelry.DTO;
 
 namespace QuanLyJewelry.DAO
 {

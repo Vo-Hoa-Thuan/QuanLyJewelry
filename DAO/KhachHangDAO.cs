@@ -1,4 +1,4 @@
-﻿using QuanLyJewelry.Model;
+﻿using QuanLyJewelry.DTO;
 using System;
 using System.Collections.Generic;
 using System.Data;

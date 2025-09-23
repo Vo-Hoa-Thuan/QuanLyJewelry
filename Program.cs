@@ -1,7 +1,7 @@
-﻿using QuanLyJewelry.Business;
+﻿using QuanLyJewelry.BLL;
 using QuanLyJewelry.DAO;
-using QuanLyJewelry.Model;
-using QuanLyJewelry.View;
+using QuanLyJewelry.DT0;
+using QuanLyJewelry.GUI;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;

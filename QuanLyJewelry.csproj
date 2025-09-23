@@ -56,7 +56,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="View\DoiMatKhau.cs">
+    <Compile Update="GUI\DoiMatKhau.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
