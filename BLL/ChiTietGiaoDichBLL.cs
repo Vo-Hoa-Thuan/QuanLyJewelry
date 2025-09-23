@@ -7,21 +7,21 @@ using System.Windows.Forms;
 
 namespace QuanLyJewelry.BLL
 {
-    internal class ChiTietGiaoDichBUS
+    internal class ChiTietGiaoDichBLL
     {
-        private static ChiTietGiaoDichBUS instance;
+        private static ChiTietGiaoDichBLL instance;
 
-        internal static ChiTietGiaoDichBUS Instance
+        internal static ChiTietGiaoDichBLL Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new ChiTietGiaoDichBUS();
+                    instance = new ChiTietGiaoDichBLL();
                 return instance;
             }
         }
 
-        private ChiTietGiaoDichBUS() { }
+        private ChiTietGiaoDichBLL() { }
 
         /// <summary>
         /// Load chi tiết giao dịch lên DataGridView theo mã GD

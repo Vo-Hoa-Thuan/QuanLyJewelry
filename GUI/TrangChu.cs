@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace QuanLyJewelry.View
+namespace QuanLyJewelry.GUI
 {
     public partial class frmTrangChu : Form
     {
