@@ -20,11 +20,6 @@ namespace QuanLyJewelry.View
             LoadNamThongKe();
             LoadThongKeTongQuan();
 
-            this.StartPosition = FormStartPosition.Manual;
-            this.Location = new Point(
-                (Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2,
-                (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 2
-            );
 
             // Wire up events (Designer did not attach handlers)
             this.cboNam.SelectedIndexChanged += cboNam_SelectedIndexChanged;
@@ -33,7 +28,20 @@ namespace QuanLyJewelry.View
             this.btnXuatExcel.Click += btnXuatExcel_Click;
             this.btnInBaoCao.Click += btnInBaoCao_Click;
             this.printDocument1.PrintPage += printDocument1_PrintPage;
+            this.Shown += frmThongKe_Shown;
+
         }
+
+        private void frmThongKe_Shown(object sender, EventArgs e)
+        {
+            this.StartPosition = FormStartPosition.Manual;
+            this.Location = new Point(
+                (Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2,
+                (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 2
+            );
+        }
+
+
 
         #region Khởi tạo Charts
         private void InitializeCustomCharts()
@@ -314,80 +322,173 @@ namespace QuanLyJewelry.View
             f.ShowDialog();
         }
 
+        // Thay thế nguyên hàm này vào frmThongKe.cs
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
+            // đảm bảo có tháng/năm
+            if (cboNam.SelectedItem == null || cboThang.SelectedItem == null)
+            {
+                e.HasMorePages = false;
+                return;
+            }
+
             int nam = (int)cboNam.SelectedItem;
             int thang = (int)cboThang.SelectedItem;
-            var g = e.Graphics;
-            int marginLeft = e.MarginBounds.Left;
-            int y = e.MarginBounds.Top;
 
-            using var titleFont = new Font("Segoe UI", 16, FontStyle.Bold);
-            using var headerFont = new Font("Segoe UI", 12, FontStyle.Bold);
-            using var textFont = new Font("Segoe UI", 10, FontStyle.Regular);
+            Graphics g = e.Graphics;
+            Rectangle margin = e.MarginBounds;
+            int x = margin.Left;
+            int y = margin.Top;
 
-            g.DrawString($"BÁO CÁO THỐNG KÊ THÁNG {thang}/{nam}", titleFont, Brushes.Black, marginLeft, y);
-            y += 40;
-
-            // Tổng quan
-            var dtTongQuan = ThongKeBUS.Instance.LayTongQuan(nam, thang);
-            if (dtTongQuan != null && dtTongQuan.Rows.Count > 0)
+            using (var titleFont = new Font("Segoe UI", 16, FontStyle.Bold))
+            using (var headerFont = new Font("Segoe UI", 12, FontStyle.Bold))
+            using (var textFont = new Font("Segoe UI", 10, FontStyle.Regular))
             {
-                var r = dtTongQuan.Rows[0];
-                g.DrawString("Tổng quan", headerFont, Brushes.Black, marginLeft, y); y += 24;
-                g.DrawString($"- Tổng số đơn hàng: {r["TongSoDonHang"]}", textFont, Brushes.Black, marginLeft, y); y += 18;
-                g.DrawString($"- Tổng doanh thu: {Convert.ToDecimal(r["TongDoanhThu"]).ToString("N0")} đ", textFont, Brushes.Black, marginLeft, y); y += 18;
-                g.DrawString($"- Đơn giá trung bình: {Convert.ToDecimal(r["DonGiaTrungBinh"]).ToString("N0")} đ", textFont, Brushes.Black, marginLeft, y); y += 18;
-                g.DrawString($"- Số khách hàng: {r["SoKhachHang"]}", textFont, Brushes.Black, marginLeft, y); y += 24;
-            }
+                // Tiêu đề
+                string title = $"BÁO CÁO THỐNG KÊ THÁNG {thang}/{nam}";
+                g.DrawString(title, titleFont, Brushes.Black, x, y);
+                y += (int)g.MeasureString(title, titleFont).Height + 8;
 
-            // Helper to print small table from a DataGridView
-            void PrintGridPreview(DataGridView grid, string sectionTitle, int maxRows = 10)
-            {
-                g.DrawString(sectionTitle, headerFont, Brushes.Black, marginLeft, y);
-                y += 22;
-                if (grid.DataSource is DataTable dt && dt.Columns.Count > 0)
+                // Tổng quan (lấy từ BUS — giống code của bạn)
+                var dtTongQuan = ThongKeBUS.Instance.LayTongQuan(nam, thang);
+                if (dtTongQuan != null && dtTongQuan.Rows.Count > 0)
                 {
-                    // headers
-                    int x = marginLeft;
-                    int colWidth = Math.Max(120, e.MarginBounds.Width / Math.Min(4, dt.Columns.Count));
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        g.DrawString(col.ColumnName, textFont, Brushes.Black, x, y);
-                        x += colWidth;
-                        if (x > e.MarginBounds.Right) break;
-                    }
-                    y += 16;
+                    var r = dtTongQuan.Rows[0];
+                    g.DrawString("Tổng quan", headerFont, Brushes.Black, x, y);
+                    y += (int)g.MeasureString("T", headerFont).Height + 4;
 
-                    int printed = 0;
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        x = marginLeft;
-                        foreach (DataColumn col in dt.Columns)
-                        {
-                            string val = row[col]?.ToString() ?? string.Empty;
-                            g.DrawString(val, textFont, Brushes.Black, x, y);
-                            x += colWidth;
-                            if (x > e.MarginBounds.Right) break;
-                        }
-                        y += 16;
-                        printed++;
-                        if (printed >= maxRows) break;
-                        if (y > e.MarginBounds.Bottom - 40)
-                        {
-                            e.HasMorePages = true;
-                            return;
-                        }
-                    }
+                    g.DrawString($"- Tổng số đơn hàng: {r["TongSoDonHang"]}", textFont, Brushes.Black, x, y);
+                    y += (int)g.MeasureString("T", textFont).Height + 2;
+
+                    g.DrawString($"- Tổng doanh thu: {Convert.ToDecimal(r["TongDoanhThu"]):N0} đ", textFont, Brushes.Black, x, y);
+                    y += (int)g.MeasureString("T", textFont).Height + 2;
+
+                    g.DrawString($"- Đơn giá trung bình: {Convert.ToDecimal(r["DonGiaTrungBinh"]):N0} đ", textFont, Brushes.Black, x, y);
+                    y += (int)g.MeasureString("T", textFont).Height + 2;
+
+                    g.DrawString($"- Số khách hàng: {r["SoKhachHang"]}", textFont, Brushes.Black, x, y);
+                    y += (int)g.MeasureString("T", textFont).Height + 8;
                 }
-                y += 10;
+
+                // Lấy dữ liệu (không lấy trực tiếp từ DataGridView)
+                var dtTopSP = ThongKeBUS.Instance.LayTopSanPham(50, nam, thang); // lấy nhiều để in
+                var dtNV = ThongKeBUS.Instance.LayDoanhThuNhanVien(nam, thang);
+                var dtKH = ThongKeBUS.Instance.LayTopKhachHang(50, nam, thang);
+
+                // In từng bảng (nếu muốn thay maxRows, chỉnh tham số cuối)
+                PrintTable(e, dtTopSP, "Top sản phẩm", ref y, margin, headerFont, textFont, maxRows: 15);
+                if (e.HasMorePages) return;
+
+                PrintTable(e, dtNV, "Doanh thu theo nhân viên", ref y, margin, headerFont, textFont, maxRows: 15);
+                if (e.HasMorePages) return;
+
+                PrintTable(e, dtKH, "Top khách hàng", ref y, margin, headerFont, textFont, maxRows: 15);
+                if (e.HasMorePages) return;
+
+                // Ký tên
+                y += 20;
+                g.DrawString("Người lập báo cáo", textFont, Brushes.Black, margin.Right - 150, y);
+            }
+        }
+
+        // Thêm 2 phương thức hỗ trợ sau vào cùng class (frmThongKe)
+        private void PrintTable(System.Drawing.Printing.PrintPageEventArgs e, DataTable dt, string title,
+            ref int y, Rectangle marginBounds, Font headerFont, Font textFont, int maxRows = 10)
+        {
+            var g = e.Graphics;
+            int x = marginBounds.Left;
+
+            g.DrawString(title, headerFont, Brushes.Black, x, y);
+            y += (int)g.MeasureString("T", headerFont).Height + 6;
+
+            if (dt == null || dt.Columns.Count == 0)
+            {
+                y += 6;
+                return;
             }
 
-            PrintGridPreview(dgvTopSanPham, "Top sản phẩm");
-            if (e.HasMorePages) return;
-            PrintGridPreview(dgvNhanVien, "Doanh thu theo nhân viên");
-            if (e.HasMorePages) return;
-            PrintGridPreview(dgvKhachHang, "Top khách hàng");
+            // Chỉ in tối đa 4 cột cho đẹp trên trang giấy
+            int colCount = Math.Min(4, dt.Columns.Count);
+
+            // Phân bố chiều rộng cột:
+            int totalW = marginBounds.Width;
+            int firstColW = colCount > 1 ? (int)(totalW * 0.45) : totalW;
+            int otherW = colCount > 1 ? (totalW - firstColW) / (colCount - 1) : 0;
+            int[] colWidths = new int[colCount];
+            for (int i = 0; i < colCount; i++)
+            {
+                colWidths[i] = (i == 0 && colCount > 1) ? firstColW : (otherW == 0 ? totalW : otherW);
+            }
+
+            // Vẽ header cột (in tên cột)
+            int hx = x;
+            using (var colHeaderFont = new Font(textFont, FontStyle.Bold))
+            {
+                for (int i = 0; i < colCount; i++)
+                {
+                    var rectH = new RectangleF(hx, y, colWidths[i], colHeaderFont.GetHeight(g) + 4);
+                    var sfh = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near };
+                    g.DrawString(dt.Columns[i].ColumnName, colHeaderFont, Brushes.Black, rectH, sfh);
+                    hx += colWidths[i];
+                }
+                y += (int)colHeaderFont.GetHeight(g) + 6;
+            }
+
+            // Vẽ từng dòng, tính rowHeight là max chiều cao của từng ô (hỗ trợ wrap)
+            int printed = 0;
+            for (int r = 0; r < dt.Rows.Count; r++)
+            {
+                var row = dt.Rows[r];
+                // đo chiều cao mỗi ô
+                int rowHeight = 0;
+                for (int c = 0; c < colCount; c++)
+                {
+                    string val = row[c]?.ToString() ?? "";
+                    SizeF s = g.MeasureString(val, textFont, colWidths[c]);
+                    int h = (int)Math.Ceiling(s.Height);
+                    if (h > rowHeight) rowHeight = h;
+                }
+                if (rowHeight < (int)textFont.GetHeight(g)) rowHeight = (int)textFont.GetHeight(g);
+
+                // Nếu vượt trang => báo tiếp trang
+                if (y + rowHeight > marginBounds.Bottom - 40)
+                {
+                    e.HasMorePages = true;
+                    return;
+                }
+
+                int cx = x;
+                for (int c = 0; c < colCount; c++)
+                {
+                    string val = row[c]?.ToString() ?? "";
+                    RectangleF rect = new RectangleF(cx, y, colWidths[c], rowHeight);
+                    var sf = new StringFormat
+                    {
+                        Alignment = IsNumericColumn(dt.Columns[c].ColumnName) ? StringAlignment.Far : StringAlignment.Near,
+                        LineAlignment = StringAlignment.Near,
+                        Trimming = StringTrimming.EllipsisCharacter,
+                        FormatFlags = StringFormatFlags.LineLimit
+                    };
+                    g.DrawString(val, textFont, Brushes.Black, rect, sf);
+                    cx += colWidths[c];
+                }
+
+                y += rowHeight + 6;
+                printed++;
+                if (printed >= maxRows) break;
+            }
+
+            y += 8;
+        }
+
+        // Helper: nhận biết tên cột là số/tiền để canh phải
+        private bool IsNumericColumn(string columnName)
+        {
+            if (string.IsNullOrEmpty(columnName)) return false;
+            string lower = columnName.ToLower();
+            return lower.Contains("doanhthu") || lower.Contains("tong") || lower.Contains("gia") ||
+                   lower.Contains("don") || lower.Contains("gia") || lower.Contains("soluong") ||
+                   lower.Contains("so") || lower.Contains("tongchi") || lower.Contains("thanhtien");
         }
 
         private void ExportReportAsExcelHtml(string filePath)

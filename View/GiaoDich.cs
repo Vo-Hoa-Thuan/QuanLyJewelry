@@ -302,13 +302,15 @@ namespace QuanLyJewelry.View
             using var headerFont = new Font("Segoe UI", 11, FontStyle.Bold);
             using var textFont = new Font("Segoe UI", 10);
 
-            g.DrawString("HÓA ĐƠN BÁN HÀNG", titleFont, Brushes.Black, x, y); y += 34;
-            g.DrawString($"Ngày: {DateTime.Now:dd/MM/yyyy HH:mm}", textFont, Brushes.Black, x, y); y += 20;
-            g.DrawString($"Khách hàng: {cboKhachHang.Text}", textFont, Brushes.Black, x, y); y += 20;
-            g.DrawString($"Nhân viên: {cboNhanVien.Text}", textFont, Brushes.Black, x, y); y += 24;
+            // ===== Tiêu đề =====
+            g.DrawString("HÓA ĐƠN BÁN HÀNG", titleFont, Brushes.Black, x, y);
+            y += 34;
+            g.DrawString($"Ngày: {gd.NgayGD:dd/MM/yyyy HH:mm}", textFont, Brushes.Black, x, y); y += 20;
+            g.DrawString($"Khách hàng: {cboKhachHang.Text}", textFont, Brushes.Black, x, y); y += 24;
+            g.DrawString($"Nhân viên: {cboNhanVien.Text}", textFont, Brushes.Black, x, y); y += 28;
 
-            // Header bảng
-            int col1 = x;              // Sản phẩm
+            // ===== Header bảng =====
+            int col1 = x;               // Sản phẩm
             int col2 = x + width - 260; // SL
             int col3 = x + width - 180; // Đơn giá
             int col4 = x + width - 80;  // Thành tiền
@@ -317,13 +319,16 @@ namespace QuanLyJewelry.View
             g.DrawString("SL", headerFont, Brushes.Black, col2, y);
             g.DrawString("Đơn giá", headerFont, Brushes.Black, col3, y);
             g.DrawString("Thành tiền", headerFont, Brushes.Black, col4, y);
-            y += 22;
-            g.DrawLine(Pens.Black, x, y, x + width, y); y += 6;
 
+            y += 22;
+            g.DrawLine(Pens.Black, x, y, x + width, y);
+            y += 6;
+
+            // ===== Chi tiết hóa đơn =====
             decimal tong = 0;
             foreach (var ct in ds)
             {
-                // Lấy tên sản phẩm từ combo datasource nếu có
+                // Lấy tên sản phẩm
                 string tenSP = ct.MaSanPham.ToString();
                 try
                 {
@@ -339,11 +344,39 @@ namespace QuanLyJewelry.View
                 decimal thanhTien = ct.SoLuong * ct.DonGia;
                 tong += thanhTien;
 
-                g.DrawString(tenSP, textFont, Brushes.Black, col1, y);
-                g.DrawString(ct.SoLuong.ToString(), textFont, Brushes.Black, col2, y);
-                g.DrawString(ct.DonGia.ToString("N0"), textFont, Brushes.Black, col3, y);
-                g.DrawString(thanhTien.ToString("N0"), textFont, Brushes.Black, col4, y);
-                y += 20;
+                // ==== Vẽ tên sản phẩm có wrap text ====
+                int productColumnWidth = col2 - col1 - 10;
+                RectangleF rectSP = new RectangleF(col1, y, productColumnWidth, 100);
+                StringFormat sfLeft = new StringFormat
+                {
+                    Alignment = StringAlignment.Near,
+                    LineAlignment = StringAlignment.Near,
+                    Trimming = StringTrimming.Word,
+                    FormatFlags = StringFormatFlags.LineLimit
+                };
+
+                g.DrawString(tenSP, textFont, Brushes.Black, rectSP, sfLeft);
+
+                // Tính chiều cao thực tế của text
+                SizeF sizeSP = g.MeasureString(tenSP, textFont, productColumnWidth);
+                int rowHeight = (int)Math.Max(sizeSP.Height, textFont.GetHeight(g));
+
+                // ==== Vẽ SL, Đơn giá, Thành tiền ====
+                StringFormat sfRight = new StringFormat { Alignment = StringAlignment.Far };
+
+                g.DrawString(ct.SoLuong.ToString(), textFont, Brushes.Black,
+                    new RectangleF(col2, y, 60, rowHeight), sfRight);
+
+                g.DrawString(ct.DonGia.ToString("N0"), textFont, Brushes.Black,
+                    new RectangleF(col3, y, 80, rowHeight), sfRight);
+
+                g.DrawString(thanhTien.ToString("N0"), textFont, Brushes.Black,
+                    new RectangleF(col4, y, 80, rowHeight), sfRight);
+
+                // Xuống dòng theo chiều cao lớn nhất
+                y += rowHeight + 6;
+
+                // Ngắt trang nếu gần hết giấy
                 if (y > e.MarginBounds.Bottom - 80)
                 {
                     e.HasMorePages = true;
@@ -351,10 +384,13 @@ namespace QuanLyJewelry.View
                 }
             }
 
+            // ===== Tổng tiền =====
             y += 10;
-            g.DrawLine(Pens.Black, x, y, x + width, y); y += 8;
+            g.DrawLine(Pens.Black, x, y, x + width, y);
+            y += 8;
             g.DrawString($"Tổng cộng: {tong.ToString("N0")} đ", headerFont, Brushes.Black, col3 - 40, y);
         }
+
 
         private bool KiemTraDuLieu()
         {

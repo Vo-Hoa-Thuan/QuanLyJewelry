@@ -228,7 +228,7 @@ namespace QuanLyJewelry.View
             label2.Name = "label2";
             label2.Size = new Size(406, 32);
             label2.TabIndex = 2;
-            label2.Text = "PHẦN MỀM QUẢN LÝ J&&T JEWELRY";
+            label2.Text = "PHẦN MỀM QUẢN LÝ T&&T JEWELRY";
             label2.Click += label2_Click_1;
             // 
             // label1

@@ -21,8 +21,8 @@ namespace QuanLyJewelry.View
 
             this.Text = "Sản phẩm đã mua";
             this.StartPosition = FormStartPosition.CenterParent;
-            this.Size = new Size(900, 600);
-            this.MinimumSize = new Size(820, 520);
+            this.Size = new Size(1200, 600);
+            this.MinimumSize = new Size(1200, 520);
             this.BackColor = Color.White;
             this.Font = new Font("Segoe UI", 10);
 
@@ -78,6 +78,18 @@ namespace QuanLyJewelry.View
                 _grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
                 _grid.AutoResizeColumns();
             }
+        }
+
+        private void InitializeComponent()
+        {
+            SuspendLayout();
+            // 
+            // frmKhachHangMuaHang
+            // 
+            ClientSize = new Size(358, 253);
+            Name = "frmKhachHangMuaHang";
+            ResumeLayout(false);
+
         }
     }
 }

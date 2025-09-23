@@ -56,7 +56,7 @@
             // frmThongKe
             // 
             this.ClientSize = new System.Drawing.Size(1300, 800); // Tăng kích thước form
-            this.MinimumSize = new System.Drawing.Size(1316, 839);
+            this.MinimumSize = new System.Drawing.Size(1250,750);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Thống kê báo cáo";
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -354,6 +354,7 @@
         }
 
         // Controls declarations
+
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.GroupBox groupBox2;
