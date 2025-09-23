@@ -4,7 +4,7 @@ using System;
 using System.Data;
 using System.Windows.Forms;
 
-namespace QuanLyJewelry.View
+namespace QuanLyJewelry.GUI
 {
     public partial class frmKhachHang : Form
     {

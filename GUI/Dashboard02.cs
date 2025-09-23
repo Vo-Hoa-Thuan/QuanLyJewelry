@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace QuanLyJewelry.View
+namespace QuanLyJewelry.GUI
 {
     public partial class frmHome2 : Form
     {

@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Printing;
 
-namespace QuanLyJewelry.View
+namespace QuanLyJewelry.GUI
 {
     public partial class frmGiaoDich : Form
     {

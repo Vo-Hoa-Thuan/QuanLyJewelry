@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-namespace QuanLyJewelry.View
+namespace QuanLyJewelry.GUI
 {
     public partial class frmNhaCungCap : Form
     {

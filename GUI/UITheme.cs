@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace QuanLyJewelry.View
+namespace QuanLyJewelry.GUI
 {
     internal static class UITheme
     {

@@ -3,7 +3,7 @@ using QuanLyJewelry.Properties;
 using System;
 using System.Windows.Forms;
 
-namespace QuanLyJewelry.View
+namespace QuanLyJewelry.GUI
 {
     public partial class frmDoiMatKhau : Form
     {
@@ -60,7 +60,7 @@ namespace QuanLyJewelry.View
             else
             {
                 // Nếu mật khẩu đã hash thì verify mật khẩu cũ
-                if (SecurityHelper.VerifyPassword(mkCu, matKhauTrongDB))
+                if (SecurityHelper.VerifyPassword(mkCu, matKhauTrongDB, nv["Salt"].ToString()))
                     hopLe = true;
             }
 

@@ -1,6 +1,6 @@
 ﻿
 
-namespace QuanLyJewelry.View
+namespace QuanLyJewelry.GUI
 {
     partial class frmGiaoDich
     {

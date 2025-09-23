@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using Image = System.Drawing.Image;
 using System.Globalization;
 
-namespace QuanLyJewelry.View
+namespace QuanLyJewelry.GUI
 {
     public partial class frmNhapSP : Form
     {

@@ -1,6 +1,6 @@
 ﻿using QuanLyJewelry.BLL;
 using QuanLyJewelry.DAO;
-using QuanLyJewelry.DT0;
+using QuanLyJewelry.DTO;
 using QuanLyJewelry.GUI;
 using System;
 using System.Collections.Generic;

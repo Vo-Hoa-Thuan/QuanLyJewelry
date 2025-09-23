@@ -1,4 +1,4 @@
-﻿namespace QuanLyJewelry.View
+﻿namespace QuanLyJewelry.GUI
 {
     partial class frmHome
     {
