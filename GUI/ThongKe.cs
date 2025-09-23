@@ -2,7 +2,7 @@
 using LiveCharts.WinForms;
 using LiveCharts.Wpf; // để dùng Axis, ColumnSeries, PieSeries
 using ClosedXML.Excel;
-using QuanLyJewelry.Business;
+using QuanLyJewelry.BLL;
 using System;
 using System.Collections.Generic;
 using System.Data;
