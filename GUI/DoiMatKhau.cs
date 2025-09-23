@@ -60,7 +60,7 @@ namespace QuanLyJewelry.GUI
             else
             {
                 // Nếu mật khẩu đã hash thì verify mật khẩu cũ
-                if (SecurityHelper.VerifyPassword(mkCu, matKhauTrongDB, nv["Salt"].ToString()))
+                if (SecurityHelper.VerifyPassword(mkCu, matKhauTrongDB))
                     hopLe = true;
             }
 
